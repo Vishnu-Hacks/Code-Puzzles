@@ -1,2 +1,2 @@
-# Learn-Algorithms
-Simple Algorithms to learn
+# Code Puzzles
+Solution for various code puzzles from various sources
