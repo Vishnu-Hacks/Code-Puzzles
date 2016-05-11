@@ -1,0 +1,123 @@
+#include <iostream>
+
+int* Merge(const int *h1,const  int* h2, int num1, int num2);
+//Merge Sort
+int* MergeSort(int* arr, int num) { 
+
+	if (num <= 1) {
+		return arr;
+	}
+	int mid = num / 2; 
+	int* h1 = new int[mid];
+	int *h2 = new int[num - mid];
+	h1 = MergeSort(arr, mid);
+	h2 = MergeSort(&arr[mid], num - mid);
+
+	int *copy = new int[num];
+	copy = Merge(h1, h2, mid, num - mid);
+
+	for (int i = 0; i < num; ++i) {
+		arr[i] = copy[i];
+	}
+	return arr;
+}
+
+
+// Quick Sort
+int* quickSort(int *arr, int num) { 
+	if (num < 2)
+		return arr;
+	int pivot = arr[0];
+	int start = 0, end = num - 1;
+	
+	while (start<end) {
+		while (arr[start] < pivot)
+		{
+			++start;
+		}
+		while (arr[end] > pivot)
+		{
+			--end;
+		}
+		
+		if (start < end) {
+			// if the elements are same no need to swap,it will lead to infinte loop.
+			if (arr[start] == arr[end]) {
+				++start;
+			}
+			else
+			{
+				int temp = arr[start];
+				arr[start] = arr[end];
+				arr[end] = temp;
+			}
+		}
+		
+	}
+	
+	quickSort(arr, start);
+	quickSort(&arr[start +1], num - (start+1 ));
+	return arr; 
+}
+
+int main() {
+	std::cout << "Number Of Elements : ";
+	long num = 0;
+	std::cin >> num;
+	int* arr1 = new int[num];
+	int *arr2 = new int[num];
+	srand(num);
+	for (int i = 0; i < num; ++i) {
+	
+		arr1[i] =  rand() % 100;
+		arr2[i] = arr1[i];
+		
+	}
+	
+	std::cout << "\nMerge Sort : \n";
+	MergeSort(arr1, num);
+	
+	std::cout << "\nQuick Sort : \n";
+	quickSort(arr2, num);
+	for (int i = 0; i < num; ++i) {
+		
+		if (arr1[i] != arr2[i])
+		{
+			std::cout << "Sorting Unsuccessfull!!";
+			exit(2);
+		}
+	}
+	return 0;
+}
+
+int* Merge(const int *h1, const int* h2, int num1, int num2) {
+
+	int num = num1 + num2;
+	int *temp = new int[num];
+
+	int n1 = 0, n2 = 0, i = 0;
+	while (n1 < num1 && n2 < num2) {
+		if (h1[n1] < h2[n2]) {
+			temp[i] = h1[n1];
+			++n1;
+		}
+		else{
+				temp[i] = h2[n2];
+				++n2;
+			}
+
+			++i;
+	}
+	while (n1 < num1) {
+		temp[i] = h1[n1];
+		++n1;
+		++i;
+	}
+	while (n2 < num2) {
+		temp[i] = h2[n2];
+		++n2;
+		++i;
+	}
+	
+	return temp;
+}
