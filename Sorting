@@ -43,7 +43,7 @@ int* quickSort(int *arr, int num) {
 		if (start < end) {
 			// if the elements are same no need to swap,it will lead to infinte loop.
 			if (arr[start] == arr[end]) {
-				++start;
+				--end;
 			}
 			else
 			{
