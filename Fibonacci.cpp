@@ -1,34 +1,73 @@
-﻿#include <iostream>
-typedef long long Long;
+#include <iostream>
+typedef unsigned  long long Long;
 class fib {
-	
+
 
 public:fib() {}
-	// returns the fibonacci number after num positions from 0.
-	 Long findFib(Long num) {
-		
-		 if (num <= 2) {
-			 return num == 0 ? 0 : 1;
-		 }
+	   // returns the fibonacci number after num positions from 0.
+	   Long findFib(Long num) {
 
-		 Long fib = 0;
-		 Long a = 1, b = 1;
-		 while (num != 2) {
-			 fib = a + b;
-			 a = b;
-			 b = fib;
-			 --num;
-		 }
-		 return fib;
+		   if (num <= 2) {
+			   return num == 0 ? 0 : 1;
+		   }
+
+		   Long fib = 0;
+		   Long a = 1, b = 1;
+		   while (num != 2) {
+			   fib = a + b;
+			   a = b;
+			   b = fib;
+			   --num;
+		   }
+		   return fib;
+	   }
+	   //Slow algorithm 
+	   // This algorithm is slow because it has lots of
+	   // overlapping sub problems, so the best approach is
+	   // Dynamic programming which is coded above and below this
+	   // function.
+	   
+	   Long findFib2(Long n) {
+
+		   if (n <= 1)
+			   return n;
+		   else
+			   return findFib2(n - 1) + findFib2(n - 2);
+	   }
+
+	   // dynamic proogramming bottom - up
+	   Long dynamic_prog_fib(Long num) {
+		   Long *arr = new Long[num+1];
+		   arr[0] = 0;
+		   arr[1] = 1;
+		   for (Long i = 2; i <=num; ++i)
+		   {
+			   arr[i] = arr[i - 1] + arr[i - 2];
+			  // std::cout << arr[i] << std::endl; // To display the series uncomment
+		   }
+		   return arr[num];
+	   }
+
+	   //dynammic programming top-down
+	   Long* arr;
+	   Long top_down(Long num) {
+		   arr = new Long[num+1];
+		   for (Long i = 0; i <= num; ++i)
+			   arr[i] = 0;
+		   return fib_top_down(num);
+	   }
+private: 
+	Long fib_top_down(Long num)
+	{
+		if(num <= 2)
+			return num == 0 ? 0 : 1;
+		if (arr[num] != 0)
+			return arr[num];
+		else {
+			arr[num]= fib_top_down(num - 1) + fib_top_down(num - 2);
+		}
+		return arr[num];
 	}
-	 //Slow algorithm 
-	 Long findFib2(Long n) {
-
-		 if (n <= 1)
-			 return n;
-		 else
-			 return findFib2(n - 1) + findFib2(n - 2);
-	 }
 };
 
 int main() {
@@ -37,10 +76,13 @@ int main() {
 		std::cout << "Enter the distance of fib number to find : ";
 		Long a;
 		std::cin >> a;
-		std::cout << "The Number is : " << b.findFib(a) << "\n";
-		std::cout << "(Slow) The Number is : ";std::cout << b.findFib2(a) << "\n\n";
+		std::cout << "Result : " << b.findFib(a) << "    (Dynamic Programming without memorization)\n";
+		std::cout << "Result : " << b.dynamic_prog_fib(a) << "    (Dynamic Programming bottom-up approach)\n";
+		std::cout << "Result : "; std::cout << b.top_down(a) << "   (Dynamic Programming top-bottom approach)\n";
+		std::cout << "(Slow)Result : "; std::cout << b.findFib2(a) << "\n\n";
 	}
 }
+
 
 /*
 Fib(0)=0
