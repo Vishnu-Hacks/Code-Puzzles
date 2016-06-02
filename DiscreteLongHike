@@ -1,0 +1,149 @@
+/* Unlike the fractional   Long   hike problem,
+ this problem solves discrete   Long   hike problem, i.e. no fractional quantity of
+ Item can be choosed(either take full quantity or not ). It can be further divided into 2 sections
+ 1. items can be repeated.
+ 2. items cannot be repeated.
+*/
+#include <iostream>
+#include<vector>
+#include<algorithm>
+#define WEIGHT 10
+#define   Long  long long  
+
+template<typename A>A max(A a, A b) {return a > b ? a : b; }
+double getMaxCal1(const double*, const Long*, Long);
+double getMaxCal2(const double*, const double*, int, double);
+//=====================  1.items can be repeated ===============
+
+//Takes the calories and quantities and returns the max,
+//calories possible to fit in the bag of weight WEIGHT.with repeating items alread filled.
+double getMaxCal1(const double* cal, const Long* wgt, Long num)
+{
+	double**mem = new double*[num + 1];
+	double **keep = new double*[num + 1];
+	std::vector<int>vec;
+	for (Long i = 0; i <= num; ++i)
+	{
+		mem[i] = new double[WEIGHT + 1];
+		keep[i] = new double[WEIGHT + 1];
+	}
+	for (Long i = 0; i <= num; ++i)
+		mem[0][i] = 0; // Optmial solutiion for 0 quantities are zero
+
+	Long k = 1;
+	Long w = 0;
+	for (Long i = 0; i < num; ++i, ++k)
+	{
+		mem[k][0] = 0; // Optimal soltution for all zero weight are zero
+
+					   // calculating the optimal solution with  'k' number of quantites with weights from 1 to MAX.
+		for (w = 1; w <= WEIGHT; ++w)
+		{
+
+			if (wgt[i] <= w && cal[i] + mem[k][w - wgt[i]]> mem[k - 1][w])
+			{
+				// (1)
+
+				mem[k][w] = cal[i] + mem[k][w - wgt[i]];
+				keep[k][w] = 1;
+			}
+			else
+			{
+				mem[k][w] = mem[k - 1][w];//(2)
+				keep[k][w] = 0;
+			}
+		}
+
+	}		// [1,2] -> will be the max calorie with k number of items and max weight of w
+	
+	return mem[num][WEIGHT]; // The max calorie of num number of quantities with MAX weight.
+}
+// ==============================================================================================
+
+// ==================================== 2. An item cannot be repeated ===========================
+double getMaxCal2(const double* cal, const Long* wgt, Long num)
+{
+	double**mem = new double*[num + 1];
+	double **keep = new double*[num + 1];
+	for (Long i = 0; i <= num; ++i)
+	{
+		mem[i] = new double[WEIGHT + 1];
+		keep[i] = new double[WEIGHT + 1];
+	}
+	for (Long i = 0; i <= num; ++i)
+		mem[0][i] = 0; // Optmial solutiion for 0 quantities are zero
+
+	Long k = 1;
+	Long w = 0;
+	for (Long i = 0; i < num; ++i, ++k)
+	{
+		mem[k][0] = 0; // Optimal soltution for all zero weight are zero
+
+					   // calculating the optimal solution with  'k' number of quantites with weights from 1 to MAX.
+		for (w = 1; w <= WEIGHT; ++w)
+		{
+			// Here the different code for non-repeating.we add the calorie of the current item the max calorie of 
+			// previous items other than this one if some more weight is remaing aftrer taking
+			// this item once.
+			if (wgt[i] <= w && cal[i] + mem[k-1][w - wgt[i]]> mem[k - 1][w])
+			{
+				// (1)
+				mem[k][w] = cal[i] + mem[k-1][w - wgt[i]];
+				keep[k][w] = 1;
+			}
+			else
+			{
+				mem[k][w] = mem[k - 1][w];//(2)
+				keep[k][w] = 0;
+			}
+		}
+
+	}		// [1,2] -> will be the max calorie with k number of items and max weight of w
+	Long ret = mem[num][WEIGHT];
+	Long W = WEIGHT;
+	std::cout << "\n\nItems Selected\n___________________\n";
+	for (Long i = num; i > 0 ; --i)
+	{
+		if (keep[i][W] == 1) {
+			std::cout << "Item #" << i << std::endl;
+			W -= wgt[i - 1];
+		}
+	}
+	std::cout << "\nMaximum Calories : ";
+	return ret; // The max calorie of num number of quantities with MAX weight.
+}
+
+// ===============================================================================================
+
+ int main() {
+
+
+	 Long num = 0; // number of items in stock for hiking"
+	std::cout << "MAX Weight of the Bag : <" << WEIGHT << " kg>\n";
+	std::cout << "Number Items For Hikings : ";
+	std::cin >> num;
+	//Two parallel arrays that stores the calories and quantity.
+	double *calories = new double[num];
+	Long * quantity = new Long[num];
+
+	 Long max_wgt = WEIGHT;
+	// giving random values to quantity and calories
+	srand(num);
+	//std::cout << "Calorie|Quantity\n";
+	for (Long i = 0; i < num; ++i) {
+		calories[i] = (rand() % 10) + 1;
+		quantity[i] = (rand() % 10) + 2;
+	}
+	
+	if(num<11)   // To avoid long output of assigned values
+	for ( Long i = 0; i < num; ++i) {
+
+		std::cout << "Item #" << 1 + i << ": Calories >  " << calories[i] << ", Quantity >  " << quantity[i] << std::endl;
+	}
+	
+	std::cout << "\nMax Calories Values Possible For Hiking (Items Repeated): ";std::cout << getMaxCal1(calories, quantity, num) << " calorie\n\n";
+
+	std::cout << "\nMax Calories Values Possible For Hiking (Items Not Repeated): "; std::cout << getMaxCal2(calories, quantity, num) << " calorie\n\n";
+	return  0;
+}
+
